@@ -307,80 +307,88 @@ class _RestaurantScreenState extends State<RestaurantScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const Text("KOT Notifications", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: kotNotifications.length,
-                  itemBuilder: (context, index) {
-                    final kot = kotNotifications[index];
-                    final id = kot['id'];
-                    final table = kot['table_number'];
-                    final itemsFormatted = kot['order_items']
-                        .map((item) => "${item['item']} x${item['quantity']}")
-                        .join(', ');
-                    final status = kot['status'] ?? 'Pending';
-                    final customer = kot['customer_name'] ?? 'Unknown';
-                    final orderId = kot['order_id'] ?? '';
+      builder: (context ) {
+        return StatefulBuilder(
+          builder: (context, setStateModel) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  const Text("KOT Notifications", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: kotNotifications.length,
+                      itemBuilder: (context, index) {
 
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                       
+                        final kot = kotNotifications[index];
+                        final id = kot['id'];
+                        final table = kot['table_number'];
+                        final itemsFormatted = kot['order_items']
+                            .map((item) => "${item['item']} x${item['quantity']}")
+                            .join(', ');
+                        final status = kot['status'] ?? 'Pending';
+                        final customer = kot['customer_name'] ?? 'Unknown';
+                        final orderId = kot['order_id'] ?? '';
+            
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Table No: $table", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.edit, size: 20),
-                                      onPressed: () async {
-                                        final result = await _editKOT(context, kot);
-                                        if (result != null) {
-                                          await updateKOT(id, result['status']);
-                                        }
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                                      onPressed: () async {
-                                        await deleteKOT(id);
-                                      },
+                                    Text("Table No: $table", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit, size: 20),
+                                          onPressed: () async {
+                                                  final result = await _editKOT(context, kot);
+                                                  if (result != null) {
+                                                    await updateKOT(id, result['status']);
+                                                    setStateModel(() {});
+                                                  }
+                                                },
+
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.delete, size: 20, color: Colors.red),
+                                          onPressed: () async {
+                                            await deleteKOT(id);
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
+                                Text("Order ID: $orderId", style: const TextStyle(fontSize: 14)),
+                                Text("Customer: $customer", style: const TextStyle(fontSize: 14)),
+                                const SizedBox(height: 8),
+                                Text("Items: $itemsFormatted", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                const SizedBox(height: 8),
+                                Text("Status: $status"),
                               ],
                             ),
-                            Text("Order ID: $orderId", style: const TextStyle(fontSize: 14)),
-                            Text("Customer: $customer", style: const TextStyle(fontSize: 14)),
-                            const SizedBox(height: 8),
-                            Text("Items: $itemsFormatted", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            const SizedBox(height: 8),
-                            Text("Status: $status"),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Close"),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("Close"),
-              ),
-            ],
-          ),
+            );
+          }
         );
       },
     );
