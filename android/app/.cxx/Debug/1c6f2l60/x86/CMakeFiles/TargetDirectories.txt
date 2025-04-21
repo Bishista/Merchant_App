@@ -1,0 +1,2 @@
+C:/AppDev/merchant_app/merchat_app/android/app/.cxx/Debug/1c6f2l60/x86/CMakeFiles/edit_cache.dir
+C:/AppDev/merchant_app/merchat_app/android/app/.cxx/Debug/1c6f2l60/x86/CMakeFiles/rebuild_cache.dir
